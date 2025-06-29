@@ -2,16 +2,15 @@ import os
 import json
 
 CHAPTERS_DIR = "chapters"
+TEMPLATE_FILE = "template/index.html"
 OUTPUT_FILE = "index.html"
 
 def build_toc():
     toc = []
 
-    for root, dirs, files in os.walk(CHAPTERS_DIR):
+    for root, _, files in os.walk(CHAPTERS_DIR):
         rel_path = os.path.relpath(root, CHAPTERS_DIR)
         chapter_name = os.path.basename(root)
-        if rel_path == ".":
-            chapter_name = "Home"
         children = []
 
         for file in sorted(files):
@@ -31,43 +30,26 @@ def build_toc():
 
     return toc
 
-def generate_index_html(toc):
-    with open("index.html", "w") as f:
-        f.write(f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Markdown Book</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.5.1/github-markdown-dark.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-<div id="container">
-  <nav id="sidebar">
-    <h2>📘 Chapters</h2>
-    <ul id="toc"></ul>
-  </nav>
-  <main id="content" class="markdown-body">
-    <h2>Welcome</h2>
-    <p>Select a chapter from the sidebar to begin reading.</p>
-  </main>
-</div>
-<script>
-  const TOC_DATA = {json.dumps(toc)};
-</script>
-<script src="https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<script src="app.js"></script>
-</body>
-</html>
-""")
+def render_template(template_path, context):
+    with open(template_path, "r", encoding="utf-8") as f:
+        html = f.read()
+
+    for key, value in context.items():
+        placeholder = f"{{{{ {key} }}}}"
+        html = html.replace(placeholder, value)
+
+    return html
 
 def main():
     toc = build_toc()
-    generate_index_html(toc)
-    print(f"[✓] Generated {OUTPUT_FILE}")
+    html = render_template(TEMPLATE_FILE, {
+        "TOC_DATA": json.dumps(toc)
+    })
+
+    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+        f.write(html)
+
+    print(f"[✓] Generated {OUTPUT_FILE} using template.")
 
 if __name__ == "__main__":
     main()

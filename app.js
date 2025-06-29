@@ -1,37 +1,14 @@
 const md = window.markdownit({
   html: true,
-  highlight: (str, lang) => {
+  highlight: function (str, lang) {
     if (lang && hljs.getLanguage(lang)) {
       try {
         return hljs.highlight(str, { language: lang }).value;
       } catch (_) {}
     }
-    return ''; 
+    return '';
   }
 });
-
-function createToc(toc, parent) {
-  toc.forEach(item => {
-    const li = document.createElement("li");
-    if (item.children) {
-      const details = document.createElement("details");
-      const summary = document.createElement("summary");
-      summary.textContent = item.title;
-      details.appendChild(summary);
-      const subList = document.createElement("ul");
-      createToc(item.children, subList);
-      details.appendChild(subList);
-      li.appendChild(details);
-    } else {
-      const a = document.createElement("a");
-      a.href = "#";
-      a.textContent = item.title;
-      a.onclick = () => loadMarkdown(item.path);
-      li.appendChild(a);
-    }
-    parent.appendChild(li);
-  });
-}
 
 function loadMarkdown(path) {
   fetch("chapters/" + path)
@@ -46,9 +23,3 @@ function loadMarkdown(path) {
       console.error(err);
     });
 }
-
-window.addEventListener("DOMContentLoaded", () => {
-  const tocList = document.getElementById("toc");
-  createToc(TOC_DATA, tocList);
-});
-

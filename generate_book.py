@@ -1,42 +1,44 @@
 import os
 import re
-import json
 
 SUMMARY_FILE = "chapters/SUMMARY.md"
 TEMPLATE_FILE = "template/index.html"
 OUTPUT_FILE = "index.html"
 
-link_pattern = re.compile(r'\[\s*(.*?)\s*\]\(\s*(.*?)\s*\)')
+# Pattern for [Title](path.md)
+link_pattern = re.compile(r"\[\s*(.*?)\s*\]\(\s*(.*?)\s*\)")
 
-def parse_summary(lines):
-    toc = []
-    stack = [(-1, toc)]  # (indent_level, children)
+def parse_summary_to_html():
+    with open(SUMMARY_FILE, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    html_lines = []
+    chapter_count = 0
+    sub_count = 0
 
     for line in lines:
-        indent = len(line) - len(line.lstrip(" "))
-        match = link_pattern.search(line)
-        node = None
+        stripped = line.strip()
 
-        if match:
+        if stripped.startswith("# "):  # Chapter
+            chapter_count += 1
+            sub_count = 0
+            chapter_title = stripped[2:].strip()
+            html_lines.append(
+                f'<li><b>{chapter_count}. {chapter_title}</b></li>\n'
+            )
+            html_lines.append("")  # blank line
+        elif match := link_pattern.search(stripped):  # Sub-chapter
+            sub_count += 1
             title, path = match.groups()
-            node = {"title": title, "path": path}
+            index = f"{chapter_count}.{sub_count}"
+            html_lines.append(
+                f'<li style="margin-left:1em;"><a href="#" onclick="loadMarkdown(\'{path}\')"><b>&nbsp;&nbsp;{index}. {title}</b></a></li>\n'
+            )
+            html_lines.append("")  # blank line
         else:
-            stripped = line.strip()
-            if stripped.startswith("- "):
-                title = stripped[2:]
-                node = {"title": title, "children": []}
+            continue  # ignore empty lines or bullets without links
 
-        if node:
-            while stack and stack[-1][0] >= indent:
-                stack.pop()
-            parent = stack[-1][1]
-            if "children" in node:
-                parent.append(node)
-                stack.append((indent, node["children"]))
-            else:
-                parent.append(node)
-
-    return toc
+    return "\n".join(html_lines)
 
 def render_template(template_path, context):
     with open(template_path, "r", encoding="utf-8") as f:
@@ -46,23 +48,15 @@ def render_template(template_path, context):
     return html
 
 def main():
-    if not os.path.exists(SUMMARY_FILE):
-        print("ERROR: SUMMARY.md not found.")
-        return
-
-    with open(SUMMARY_FILE, "r", encoding="utf-8") as f:
-        lines = f.readlines()
-
-    toc = parse_summary(lines)
-    html = render_template(TEMPLATE_FILE, {
-        "TOC_DATA": json.dumps(toc)
+    toc_html = parse_summary_to_html()
+    final_html = render_template(TEMPLATE_FILE, {
+        "TOC_HTML": toc_html
     })
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-        f.write(html)
+        f.write(final_html)
 
-    print(f"[✓] Built {OUTPUT_FILE} from SUMMARY.md.")
+    print(f"[✓] Built {OUTPUT_FILE} from SUMMARY.md")
 
 if __name__ == "__main__":
     main()
-

@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Markdown Book</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.5.1/github-markdown-dark.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.5.1/github-markdown-dark.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -12,16 +12,15 @@
   <div id="container">
     <nav id="sidebar">
       <h2>📘 Chapters</h2>
-      <ul id="toc"></ul>
+      <ul id="toc">
+        {{ TOC_HTML }}
+      </ul>
     </nav>
     <main id="content" class="markdown-body">
       <h2>Welcome</h2>
-      <p>Select a chapter from the sidebar to begin reading.</p>
+      <p>Select a chapter to begin reading.</p>
     </main>
   </div>
-  <script>
-    const TOC_DATA = {{ TOC_DATA }};
-  </script>
   <script src="https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="app.js"></script>

@@ -1,47 +1,59 @@
 import os
+import re
 import json
 
-CHAPTERS_DIR = "chapters"
+SUMMARY_FILE = "chapters/SUMMARY.md"
 TEMPLATE_FILE = "template/index.html"
 OUTPUT_FILE = "index.html"
 
-def build_toc():
+link_pattern = re.compile(r'\[\s*(.*?)\s*\]\(\s*(.*?)\s*\)')
+
+def parse_summary(lines):
     toc = []
+    stack = [(-1, toc)]  # (indent_level, children)
 
-    for root, _, files in os.walk(CHAPTERS_DIR):
-        rel_path = os.path.relpath(root, CHAPTERS_DIR)
-        chapter_name = os.path.basename(root)
-        children = []
+    for line in lines:
+        indent = len(line) - len(line.lstrip(" "))
+        match = link_pattern.search(line)
+        node = None
 
-        for file in sorted(files):
-            if file.endswith(".md"):
-                children.append({
-                    "title": file[:-3],
-                    "path": os.path.join(rel_path, file).replace("\\", "/")
-                })
-
-        if rel_path == ".":
-            toc.extend(children)
+        if match:
+            title, path = match.groups()
+            node = {"title": title, "path": path}
         else:
-            toc.append({
-                "title": chapter_name,
-                "children": children
-            })
+            stripped = line.strip()
+            if stripped.startswith("- "):
+                title = stripped[2:]
+                node = {"title": title, "children": []}
+
+        if node:
+            while stack and stack[-1][0] >= indent:
+                stack.pop()
+            parent = stack[-1][1]
+            if "children" in node:
+                parent.append(node)
+                stack.append((indent, node["children"]))
+            else:
+                parent.append(node)
 
     return toc
 
 def render_template(template_path, context):
     with open(template_path, "r", encoding="utf-8") as f:
         html = f.read()
-
     for key, value in context.items():
-        placeholder = f"{{{{ {key} }}}}"
-        html = html.replace(placeholder, value)
-
+        html = html.replace(f"{{{{ {key} }}}}", value)
     return html
 
 def main():
-    toc = build_toc()
+    if not os.path.exists(SUMMARY_FILE):
+        print("ERROR: SUMMARY.md not found.")
+        return
+
+    with open(SUMMARY_FILE, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    toc = parse_summary(lines)
     html = render_template(TEMPLATE_FILE, {
         "TOC_DATA": json.dumps(toc)
     })
@@ -49,7 +61,7 @@ def main():
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(html)
 
-    print(f"[✓] Generated {OUTPUT_FILE} using template.")
+    print(f"[✓] Built {OUTPUT_FILE} from SUMMARY.md.")
 
 if __name__ == "__main__":
     main()

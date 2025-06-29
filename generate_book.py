@@ -1,9 +1,9 @@
 import os
 import re
 
-SUMMARY_FILE = "chapters/SUMMARY.md"
+OUTPUT_FILE   = "index.html"
+SUMMARY_FILE  = "chapters/SUMMARY.md"
 TEMPLATE_FILE = "template/index.html"
-OUTPUT_FILE = "index.html"
 
 # Pattern for [Title](path.md)
 link_pattern = re.compile(r"\[\s*(.*?)\s*\]\(\s*(.*?)\s*\)")
@@ -23,18 +23,17 @@ def parse_summary_to_html():
             chapter_count += 1
             sub_count = 0
             chapter_title = stripped[2:].strip()
-            html_lines.append(
-                f'<li><b>{chapter_count}. {chapter_title}</b></li>\n'
-            )
             html_lines.append("")  # blank line
+            html_lines.append(
+                f'        <h3><b>{chapter_count}. {chapter_title}</b></h3>'
+            )
         elif match := link_pattern.search(stripped):  # Sub-chapter
             sub_count += 1
             title, path = match.groups()
             index = f"{chapter_count}.{sub_count}"
             html_lines.append(
-                f'<li style="margin-left:1em;"><a href="#" onclick="loadMarkdown(\'{path}\')"><b>&nbsp;&nbsp;{index}. {title}</b></a></li>\n'
+                f'        <div style="margin-left:1em;"><a href="#" onclick="loadMarkdown(\'{path}\')">{index}. {title}</a></div>'
             )
-            html_lines.append("")  # blank line
         else:
             continue  # ignore empty lines or bullets without links
 

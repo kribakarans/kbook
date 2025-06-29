@@ -13,31 +13,44 @@ def parse_summary_to_html():
         lines = f.readlines()
 
     html_lines = []
+    subchapter_refs = []
     chapter_count = 0
     sub_count = 0
 
     for line in lines:
         stripped = line.strip()
 
-        if stripped.startswith("# "):  # Chapter
+        if stripped.startswith("# "):  # Chapter line
             chapter_count += 1
             sub_count = 0
             chapter_title = stripped[2:].strip()
+            chapter_id = f"chapter_{chapter_count}"
+            escaped_title = chapter_title.replace("'", "\\'")
             html_lines.append("")  # blank line
             html_lines.append(
-                f'        <h3><b>{chapter_count}. {chapter_title}</b></h3>'
+                f'        <h3><b><a href="#" onclick="showSubChapters(\'{chapter_id}\', \'{escaped_title}\')">{chapter_count}. {chapter_title}</a></b></h3>'
             )
-        elif match := link_pattern.search(stripped):  # Sub-chapter
+            subchapter_refs.append((chapter_id, []))
+
+        elif match := link_pattern.search(stripped):  # Subchapter
             sub_count += 1
             title, path = match.groups()
             index = f"{chapter_count}.{sub_count}"
             html_lines.append(
                 f'        <div style="margin-left:1em;"><a href="#" onclick="loadMarkdown(\'{path}\')">{index}. {title}</a></div>'
             )
-        else:
-            continue  # ignore empty lines or bullets without links
+            subchapter_refs[-1][1].append((index, title, path))
 
-    return "\n".join(html_lines)
+    # JS map for subchapters
+    js_map = "window.chapterMap = {\n"
+    for cid, items in subchapter_refs:
+        js_map += f'  "{cid}": [\n'
+        for idx, title, path in items:
+            js_map += f'    {{ index: "{idx}", title: "{title}", path: "{path}" }},\n'
+        js_map += "  ],\n"
+    js_map += "};\n"
+
+    return "\n".join(html_lines) + f"\n\n<script>\n{js_map}</script>"
 
 def render_template(template_path, context):
     with open(template_path, "r", encoding="utf-8") as f:

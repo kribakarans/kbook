@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>KBook</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.5.1/github-markdown-dark.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
   <link rel="stylesheet" href="style.css" />
@@ -22,8 +22,27 @@
       <p>Select a chapter to begin reading.</p>
     </main>
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="app.js"></script>
+  <script>
+    function showSubChapters(chapterId, chapterTitle) {
+      const subchapters = window.chapterMap?.[chapterId];
+      const content = document.getElementById("content");
+
+      if (!subchapters || subchapters.length === 0) {
+        content.innerHTML = `<h2>${chapterTitle}</h2><p>No subchapters found.</p>`;
+        return;
+      }
+
+      let html = `<h2>${chapterTitle}</h2><ul>`;
+      for (const item of subchapters) {
+        html += `<li><a href="#" onclick="loadMarkdown('${item.path}')">${item.index}. ${item.title}</a></li>`;
+      }
+      html += "</ul>";
+      content.innerHTML = html;
+    }
+  </script>
 </body>
 </html>

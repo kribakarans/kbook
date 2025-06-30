@@ -17,32 +17,20 @@
         {{ TOC_HTML }}
       </div>
     </nav>
-    <main id="content" class="markdown-body">
-      <h2>Welcome</h2>
-      <p>Select a chapter to begin reading.</p>
+    <main id="main-area">
+      <div id="chapter-header">
+        <h1 id="chapter-title"></h1>
+        <p id="chapter-source"></p>
+      </div>
+      <div id="content" class="markdown-body">
+        <h2>Hello world!</h2>
+        <p>Select a chapter to begin reading.</p>
+      </div>
     </main>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="app.js"></script>
-  <script>
-    function showSubChapters(chapterId, chapterTitle) {
-      const subchapters = window.chapterMap?.[chapterId];
-      const content = document.getElementById("content");
-
-      if (!subchapters || subchapters.length === 0) {
-        content.innerHTML = `<h2>${chapterTitle}</h2><p>No subchapters found.</p>`;
-        return;
-      }
-
-      let html = `<h2>${chapterTitle}</h2><ul>`;
-      for (const item of subchapters) {
-        html += `<li><a href="#" onclick="loadMarkdown('${item.path}')">${item.index}. ${item.title}</a></li>`;
-      }
-      html += "</ul>";
-      content.innerHTML = html;
-    }
-  </script>
 </body>
 </html>

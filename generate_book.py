@@ -5,7 +5,7 @@ OUTPUT_FILE   = "index.html"
 SUMMARY_FILE  = "chapters/SUMMARY.md"
 TEMPLATE_FILE = "template/index.html"
 
-# Pattern for [Title](path.md)
+# Pattern for [Title](path)
 link_pattern = re.compile(r"\[\s*(.*?)\s*\]\(\s*(.*?)\s*\)")
 
 def parse_summary_to_html():
@@ -25,10 +25,11 @@ def parse_summary_to_html():
             sub_count = 0
             chapter_title = stripped[2:].strip()
             chapter_id = f"chapter_{chapter_count}"
-            escaped_title = chapter_title.replace("'", "\\'")
+            escaped_title = chapter_title.replace("'", "\\'").replace('"', '\\"')
+
             html_lines.append("")  # blank line
             html_lines.append(
-                f'        <h3><b><a href="#" onclick="showSubChapters(\'{chapter_id}\', \'{escaped_title}\')">{chapter_count}. {chapter_title}</a></b></h3>'
+                f'        <h3><b><a href="#" onclick="showSubChapters(\'{chapter_id}\', \'{escaped_title}\', \'{chapter_count}\')">{chapter_count}. {chapter_title}</a></b></h3>'
             )
             subchapter_refs.append((chapter_id, []))
 
@@ -37,7 +38,7 @@ def parse_summary_to_html():
             title, path = match.groups()
             index = f"{chapter_count}.{sub_count}"
             html_lines.append(
-                f'        <div style="margin-left:1em;"><a href="#" onclick="loadMarkdown(\'{path}\')">{index}. {title}</a></div>'
+                f'        <div style="margin-left:1em;"><a href="#" onclick="loadMarkdown(\'{path}\', \'{escaped_title}\', \'{title}\')">{index}. {title}</a></div>'
             )
             subchapter_refs[-1][1].append((index, title, path))
 

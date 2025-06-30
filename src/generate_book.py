@@ -1,9 +1,12 @@
 import os
 import re
 
+HOME_DIR = os.path.expanduser("~")
+PREFIX = os.path.join(HOME_DIR, ".local", "kbook", "html")
+
 OUTPUT_FILE   = "index.html"
 SUMMARY_FILE  = "chapters/SUMMARY.md"
-TEMPLATE_FILE = "template/index.html"
+TEMPLATE_FILE = os.path.join(PREFIX, "index.html.in")
 
 # Pattern for [Title](path)
 link_pattern = re.compile(r"\[\s*(.*?)\s*\]\(\s*(.*?)\s*\)")

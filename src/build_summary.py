@@ -1,12 +1,12 @@
 import os
+import sys
 
-CHAPTERS_DIR = "chapters"
-SUMMARY_FILE = os.path.join(CHAPTERS_DIR, "SUMMARY.md")
+def build_summary(chapters_dir):
+    summary_file = os.path.join(chapters_dir, "SUMMARY.md")
 
-def build_summary():
     chapter_dirs = sorted([
-        d for d in os.listdir(CHAPTERS_DIR)
-        if os.path.isdir(os.path.join(CHAPTERS_DIR, d))
+        d for d in os.listdir(chapters_dir)
+        if os.path.isdir(os.path.join(chapters_dir, d))
     ])
 
     lines = []
@@ -17,30 +17,37 @@ def build_summary():
         lines.append(f"# {chapter_title}")
         print(f"[+] Chapter: {chapter_title}")
 
-        chapter_path = os.path.join(CHAPTERS_DIR, chapter)
+        chapter_path = os.path.join(chapters_dir, chapter)
         files = sorted([
             f for f in os.listdir(chapter_path)
             if os.path.isfile(os.path.join(chapter_path, f))
         ])
 
-        if not files:
-            print(f"  [!] No files in {chapter}/")
-        else:
-            for file in files:
-                name = os.path.splitext(file)[0].replace('-', ' ').replace('_', ' ').title()
-                rel_path = f"{chapter}/{file}"
-                line = f"- [{name}]({rel_path})"
-                lines.append(line)
-                print(f"    [•] Subchapter: {line}")
+        for file in files:
+            name = os.path.splitext(file)[0].replace('-', ' ').replace('_', ' ').title()
+            rel_path = f"{chapter}/{file}"
+            line = f"- [{name}]({rel_path})"
+            lines.append(line)
+            print(f"    [•] Subchapter: {line}")
 
-        lines.append("")  # blank line after each chapter
+        lines.append("")
 
-    print(f"[✓] Writing to {SUMMARY_FILE}...")
-    with open(SUMMARY_FILE, "w", encoding="utf-8") as f:
+    print(f"[✓] Writing to {summary_file}...")
+    with open(summary_file, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
+    print(f"[✓] Generated {summary_file} successfully.")
 
-    print(f"[✓] Generated {SUMMARY_FILE} successfully.")
-
+# Optional CLI support
 if __name__ == "__main__":
-    build_summary()
+    if len(sys.argv) < 2:
+        print("Usage: python build_summary.py <chapter-directory>")
+        sys.exit(1)
 
+    target_dir = sys.argv[1]
+    if not os.path.isdir(target_dir):
+        print(f"[✗] Error: Directory '{target_dir}' does not exist.")
+        sys.exit(1)
+
+    build_summary(target_dir)
+
+# EOF

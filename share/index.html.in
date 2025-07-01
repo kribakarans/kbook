@@ -144,6 +144,8 @@
   <script src="https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script>
+    const CHAPTER_DIR = "{{ CHAPTER_DIR }}";
+
     const md = window.markdownit({
       html: true,
       highlight: function (str, lang) {
@@ -171,7 +173,7 @@
       } else {
         html += "<ul>";
         for (const item of subchapters) {
-          html += `<li><a href="#" onclick="loadMarkdown('${item.path}')">${item.index}. ${item.title}</a></li>`;
+          html += `<li><a href="#" onclick="loadMarkdown('${item.path}', '${chapterTitle}', '${item.title}')">${item.index}. ${item.title}</a></li>`;
         }
         html += "</ul>";
       }
@@ -186,10 +188,10 @@
       const chapterHeader = document.getElementById("chapter-title");
       const chapterSource = document.getElementById("chapter-source");
 
-      chapterSource.textContent = `${path}`;
-      chapterHeader.textContent = `${header}`;
+      chapterSource.textContent = path;
+      chapterHeader.textContent = header;
 
-      fetch("chapters/" + path)
+      fetch(`${CHAPTER_DIR}/${path}`)
         .then(res => res.text())
         .then(data => {
           if (ext === 'md') {

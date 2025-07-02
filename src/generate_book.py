@@ -68,9 +68,6 @@ def main(chapters_dir, title="KBook", repo_url="#"):
 
     toc_html = parse_summary_to_html(summary_file)
 
-    # Get base folder name like "chapters", "docs", etc.
-    chapter_folder_name = os.path.basename(os.path.abspath(chapters_dir))
-
     # Detect default index file
     default_index = ""
     for fname in ["INDEX.md", "index.md"]:
@@ -81,16 +78,15 @@ def main(chapters_dir, title="KBook", repo_url="#"):
 
     final_html = render_template(TEMPLATE_FILE, {
         "TOC_HTML": toc_html,
-        "CHAPTER_DIR": chapter_folder_name,
         "TITLE_NAME": title,
         "REPO_URL": repo_url,
         "DEFAULT_INDEX": default_index
     })
 
-    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+    with open(os.path.join(chapters_dir, "index.html"), "w", encoding="utf-8") as f:
         f.write(final_html)
 
-    print(f"[✓] Built {OUTPUT_FILE} from {summary_file}")
+    print(f"[✓] Built {chapters_dir}{OUTPUT_FILE}.")
 
 # Main
 if __name__ == "__main__":

@@ -189,8 +189,6 @@
   <script src="https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script>
-    const CHAPTER_DIR = "{{ CHAPTER_DIR }}";
-
     const md = window.markdownit({
       html: true,
       highlight: function (str, lang) {
@@ -236,7 +234,7 @@
       chapterSource.textContent = path;
       chapterHeader.textContent = header;
 
-      fetch(`${CHAPTER_DIR}/${path}`)
+      fetch(`${path}`)
         .then(res => res.text())
         .then(data => {
           if (ext === 'md') {

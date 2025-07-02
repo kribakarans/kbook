@@ -1,32 +1,40 @@
 # KBook: MD Book Generator
 
-A lightweight `mdBook`-like static site generator to view and browse Markdown-based books with a sidebar.
+A lightweight `mdBook`-like static site generator to view and browse Markdown-based books.
 
-- Sidebar with chapters & subchapters from `SUMMARY.md`
-- Clickable **chapter headers** show their subchapters in preview
-- Clickable **subchapters** load the actual Markdown content
-- GitHub dark theme & syntax highlighting via `highlight.js`
+## Features
+
+| Feature                   | Description                                               |
+|---------------------------|-----------------------------------------------------------|
+| Title & Repo support      | Page title and repo link from command-line args           |
+| Sidebar navigation        | Auto-generated from `SUMMARY.md`                          |
+| Chapter preview           | Clicking chapter shows its subchapters                    |
+| Live content loading      | Subchapters load via JavaScript (Markdown + code support) |
+| GitHub dark theme         | Beautiful styling using `github-markdown-css`             |
+| Syntax highlighting       | With `highlight.js` for all major languages               |
+| Render all file           | Additionaly render all file types                         |
+| Mobile-friendly           | Responsive layout for phones/tablets                      |
 
 ## Directory Structure
 
 ```
-project/
-├── chapters/               # Your markdown content here
-│   ├── SUMMARY.md          # Defines chapter structure
-│   ├── intro.md
-│   └── getting-started.md
-├── template/
-│   └── index.html          # HTML template with placeholder
-├── style.css               # UI styling
-├── app.js                  # JS to load and render markdown
-├── generate_book.py        # Python script to build final HTML
-└── index.html              # Output generated file
+kbook/
+├── Makefile
+├── README.md
+├── share
+│   └── index.html.in
+└── src
+    ├── build_summary.py
+    ├── generate_book.py
+    └── kbook.py
 ```
 
 ## How It Works
 
-- `generate_book.py` reads your `chapters/SUMMARY.md`
-- It builds a sidebar with numbered chapters (`#`) and subchapters (`- [Title](file.md)`)
+- `kbook.py` is the main entry point.
+- `build_summary.py` optionally auto-generates `SUMMARY.md` from folder structure.
+- `generate_book.py` parses `SUMMARY.md` and populates the TOC.
+- `index.html` is built from a template and dynamic TOC.
 - On chapter click → preview shows list of subchapters
 - On subchapter click → loads and renders the Markdown with `markdown-it`
 
@@ -50,32 +58,44 @@ project/
 ## Getting Started
 
 1. Clone or download the repo
+```bash
+git clone git@github.com:kribakarans/kbook.git
+cd kbook && make install
+```
 
-2. Place your markdown files in chapters/ and structure them using chapters/SUMMARY.md
+2. Go to the repo you want to build as a MD-Book, and run the `kbook` CLI:
+
+Example:
+```bash
+cd howto/
+
+howto/
+└── topics
+    ├── chroot
+    ├── docker
+    ├── gitweb
+    ├── redmine
+    └── whatsapp
+```
 
 3. Generate the final HTML
-
-	python generate_book.py
-
-4. Open it in browser
-
-	xdg-open index.html  # or open index.html manually
-
-## Features
-
-| Feature                  | Description                                |
-|--------------------------|--------------------------------------------|
-| Static output            | Generates `index.html` without a webserver |
-| GitHub dark theme        | via `github-markdown-dark.css`             |
-| Syntax highlighting      | via `highlight.js`                         |
-| No dependencies          | Just Python 3, JS, HTML                    |
-
+```
+kbook <title> <chapter-dir> <repo-url>
+```
+Example:
+```
+kbook "Howto" topics/ https://github.com/kribakarans/howo/
+```
+4. Run web server and visit http://localhost:1111/
+```
+python -m http.server 1111
+```
 ## Dependencies
 
-Only needs Python 3 to generate the HTML.
-
 In the browser:
+- Python 3
 - [markdown-it](https://github.com/markdown-it/markdown-it)
 - [highlight.js](https://highlightjs.org/)
 - [GitHub markdown CSS](https://github.com/sindresorhus/github-markdown-css)
 
+---

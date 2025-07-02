@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>KBook</title>
+  <title>{{ TITLE_NAME }}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📘</text></svg>">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" />
@@ -40,6 +40,17 @@
       color: #58a6ff;
       font-size: 1.2em;
       margin-top: 0;
+    }
+
+    #book-header {
+      position: sticky;
+      top: 0;
+      background-color: #161b22;
+      color: #58a6ff;
+      margin: 0;
+      margin-left: -20px;
+      padding: 0.5em;
+      z-index: 1000;
     }
 
     #toc h3 {
@@ -160,20 +171,18 @@
 <body>
   <div id="container">
     <nav id="sidebar">
-      <h2>📘 KBook</h2>
+      <h1 id="book-header" onclick="window.open('{{ REPO_URL }}', '_blank')"
+        style="cursor: pointer;">📘 {{ TITLE_NAME }}</h1>
       <div id="toc">
         {{ TOC_HTML }}
       </div>
     </nav>
     <main id="main-area">
       <div id="chapter-header">
-        <h1 id="chapter-title"></h1>
+        <h2 id="chapter-title"></h2>
         <p id="chapter-source"></p>
       </div>
-      <div id="content" class="markdown-body">
-        <h2>Hello world!</h2>
-        <p>Select a chapter to begin reading.</p>
-      </div>
+      <div id="content" class="markdown-body"></div>
     </main>
   </div>
 
@@ -260,6 +269,18 @@
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
     }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const defaultPath = "{{ DEFAULT_INDEX }}";
+      if (defaultPath) {
+        loadMarkdown(defaultPath, "", "");
+      } else {
+        document.getElementById("content").innerHTML = `
+          <h2>Hello world!</h2>
+          <p>Select a chapter to begin reading.</p>
+        `;
+      }
+    });
   </script>
 </body>
 

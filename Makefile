@@ -15,9 +15,9 @@ SRC := $(DIRSRC)/build_summary.py
 SRC += $(DIRSRC)/generate_book.py
 
 install:
-	mkdir -p $(DESTDIR)$(SYSDIRKBOOK)/html
+	mkdir -p $(DESTDIR)$(SYSDIRKBOOK)
 	cp -rf $(SRC) $(DESTDIR)$(SYSDIRKBOOK)
-	cp -rvf $(DIRSHARE)/* $(DESTDIR)$(SYSDIRKBOOK)/html
+	cp -rf $(DIRSHARE) $(DESTDIR)$(SYSDIRKBOOK)/html
 	install -D $(DIRSRC)/kbook.py $(DESTDIR)$(SYSBINDIR)/$(TARGET)
 
 uninstall:

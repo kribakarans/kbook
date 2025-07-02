@@ -11,16 +11,17 @@ from build_summary import build_summary
 import generate_book
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: python kbook.py <chapter-directory>")
+    if len(sys.argv) < 3:
+        print("Usage: python kbook.py <TITLE_NAME> <CHAPTER_DIR> [REPO_URL]")
         sys.exit(1)
 
-    chapters_dir = sys.argv[1]
+    title = sys.argv[1]
+    chapters_dir = sys.argv[2]
+    repo_url = sys.argv[3] if len(sys.argv) >= 4 else "#"
+
     if not os.path.isdir(chapters_dir):
         print(f"[✗] Error: Directory '{chapters_dir}' does not exist.")
         sys.exit(1)
-
-    os.environ["CHAPTERS_DIR"] = chapters_dir  # pass to submodules
 
     summary_path = os.path.join(chapters_dir, "SUMMARY.md")
     if os.path.exists(summary_path):
@@ -30,7 +31,7 @@ def main():
         build_summary(chapters_dir)
 
     print("[*] Generating HTML book...")
-    generate_book.main(chapters_dir)
+    generate_book.main(chapters_dir, title, repo_url)
     print("[✓] Done.")
 
 if __name__ == "__main__":

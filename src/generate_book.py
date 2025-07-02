@@ -60,7 +60,7 @@ def render_template(template_path, context):
         html = html.replace(f"{{{{ {key} }}}}", value)
     return html
 
-def main(chapters_dir):
+def main(chapters_dir, title="KBook", repo_url="#"):
     summary_file = os.path.join(chapters_dir, "SUMMARY.md")
     if not os.path.isfile(summary_file):
         print(f"[✗] SUMMARY.md not found in {chapters_dir}")
@@ -71,9 +71,20 @@ def main(chapters_dir):
     # Get base folder name like "chapters", "docs", etc.
     chapter_folder_name = os.path.basename(os.path.abspath(chapters_dir))
 
+    # Detect default index file
+    default_index = ""
+    for fname in ["INDEX.md", "index.md"]:
+        full_path = os.path.join(chapters_dir, fname)
+        if os.path.exists(full_path):
+            default_index = fname
+            break
+
     final_html = render_template(TEMPLATE_FILE, {
         "TOC_HTML": toc_html,
-        "CHAPTER_DIR": chapter_folder_name
+        "CHAPTER_DIR": chapter_folder_name,
+        "TITLE_NAME": title,
+        "REPO_URL": repo_url,
+        "DEFAULT_INDEX": default_index
     })
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:

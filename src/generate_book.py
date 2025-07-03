@@ -33,6 +33,16 @@ def parse_summary_to_html(summary_file):
             )
             subchapter_refs.append((chapter_id, []))
         elif match := link_pattern.search(stripped):
+            # If no chapter yet, create a default one
+            if not subchapter_refs:
+                chapter_count += 1
+                sub_count = 0
+                chapter_title = "Untitled"
+                chapter_id = f"chapter_{chapter_count}"
+                escaped_title = chapter_title.replace("'", "\\'")
+                html_lines.append(f'        <h3><b><a href="#" onclick="showSubChapters(\'{chapter_id}\', \'{escaped_title}\', \'{chapter_count}\')">{chapter_count}. {chapter_title}</a></b></h3>')
+                subchapter_refs.append((chapter_id, []))
+
             sub_count += 1
             title, path = match.groups()
             index = f"{chapter_count}.{sub_count}"

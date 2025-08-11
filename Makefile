@@ -7,17 +7,17 @@ TARGET    := kbook
 RELEASE   := 1.0
 
 DIRSRC    := src
-DIRSHARE  := share
+DIRHTML   := html
 SYSBINDIR := $(PREFIX)/bin
 SYSDIRKBOOK := $(PREFIX)/kbook
 
 SRC := $(DIRSRC)/build_summary.py
-SRC += $(DIRSRC)/generate_book.py
+SRC += $(DIRSRC)/build_book.py
 
 install:
 	mkdir -p $(DESTDIR)$(SYSDIRKBOOK)
 	cp -rf $(SRC) $(DESTDIR)$(SYSDIRKBOOK)
-	cp -rf $(DIRSHARE) $(DESTDIR)$(SYSDIRKBOOK)/html
+	cp -rf $(DIRHTML) $(DESTDIR)$(SYSDIRKBOOK)/html
 	install -D $(DIRSRC)/kbook.py $(DESTDIR)$(SYSBINDIR)/$(TARGET)
 
 uninstall:

@@ -10,7 +10,7 @@ It:
   4. Replaces placeholders in kbook_index.html.in template:
        {{TOC_HTML}}, {{TITLE_NAME}}, {{REPO_URL}}, {{DEFAULT_INDEX}}
   5. Writes the final index.html into the chapters directory.
-  6. Copies `html/viewport.html` from the script’s location into <chapters_dir>/viewport.html
+  6. Copies `html/kbook.html` from the script’s location into <chapters_dir>/kbook.html
 """
 
 import sys
@@ -21,7 +21,7 @@ from pathlib import Path
 # Paths and constants
 TEMPLATE_FILE = Path(__file__).parent / "html/index.html.in"   # HTML template
 OUTPUT_NAME = "index.html"                                      # Output file name
-VIEWPORT_SOURCE = Path(__file__).parent / "html" / "viewport.html" # Source file to copy
+VIEWPORT_SOURCE = Path(__file__).parent / "html" / "kbook.html" # Source file to copy
 LINK_PATTERN = re.compile(r"\[\s*(.*?)\s*\]\(\s*(.*?)\s*\)")    # Matches [Title](path) in SUMMARY.md
 
 
@@ -133,16 +133,16 @@ def render_template(template_path: Path, context: dict) -> str:
 
 def copy_viewport_html(dest_dir: Path):
     """
-    Copy `html/viewport.html` → <chapters_dir>/viewport.html.
+    Copy `html/kbook.html` → <chapters_dir>/kbook.html.
 
     Args:
       dest_dir (Path): Target chapters directory.
     """
     if not VIEWPORT_SOURCE.exists():
-        print(f"[!] Warning: viewport.html not found at {VIEWPORT_SOURCE}")
+        print(f"[!] Warning: kbook.html not found at {VIEWPORT_SOURCE}")
         return
     dest_dir.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(VIEWPORT_SOURCE, dest_dir / "viewport.html")
+    shutil.copy2(VIEWPORT_SOURCE, dest_dir / "kbook.html")
 
 
 def main(chapters_dir: str, title: str = "KBook", repo_url: str = "#"):
@@ -151,7 +151,7 @@ def main(chapters_dir: str, title: str = "KBook", repo_url: str = "#"):
       - Read SUMMARY.md
       - Generate TOC HTML and JS chapterMap
       - Render final index.html
-      - Copy viewport.html
+      - Copy kbook.html
     """
     chapters_path = Path(chapters_dir)
     summary_file = chapters_path / "SUMMARY.md"
@@ -185,7 +185,7 @@ def main(chapters_dir: str, title: str = "KBook", repo_url: str = "#"):
     output_file.write_text(final_html, encoding="utf-8")
     print(f"[✓] Built {output_file}")
 
-    # Copy viewport.html
+    # Copy kbook.html
     copy_viewport_html(chapters_path)
 
 

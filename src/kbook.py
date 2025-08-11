@@ -8,7 +8,7 @@ INSTALL_DIR = os.path.expanduser("~/.local/kbook")
 sys.path.insert(0, INSTALL_DIR)
 
 from build_summary import build_summary
-import generate_book
+import build_book
 
 def main():
     if len(sys.argv) < 3:
@@ -27,11 +27,11 @@ def main():
     if os.path.exists(summary_path):
         print(f"[i] Using existing {summary_path}")
     else:
-        print("[*] Generating SUMMARY.md...")
+        print("[*] Building SUMMARY.md ...")
         build_summary(chapters_dir)
 
-    print("[*] Generating HTML book...")
-    generate_book.main(chapters_dir, title, repo_url)
+    print("\n[*] Building KBook ...")
+    build_book.main(chapters_dir, title, repo_url)
     print("[✓] Done.")
 
 if __name__ == "__main__":

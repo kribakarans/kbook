@@ -154,14 +154,14 @@
     </aside>
 
     <section class="main-view">
-      <iframe id="file-viewer" name="file-viewer" src="viewport.html?file={{ DEFAULT_INDEX }}" frameborder="0"></iframe>
+      <iframe id="file-viewer" name="file-viewer" src="kbook.html?file={{ DEFAULT_INDEX }}" frameborder="0"></iframe>
     </section>
   </div>
 
   <script>
     // openFile: open into iframe on desktop, new tab on small screens or with Ctrl/Cmd click
     function openFile(filePath, event) {
-      const url = "viewport.html?file=" + encodeURIComponent(filePath);
+      const url = "kbook.html?file=" + encodeURIComponent(filePath);
 
       // If Ctrl (Windows/Linux) or Cmd (Mac) key is pressed → open in new tab
       if (event && (event.ctrlKey || event.metaKey)) {
